@@ -15,6 +15,11 @@ class FTPController:
     print('Successfully connected to', self.commandHost + '.')
     return self.getResponse()
 
+  def initPassiveMode(self):
+    response = self.sendCommandAndGetResponse('PASV')
+    dataAddress = ftputils.parseHostAddressAndPort(response)
+    return dataAddress
+
   def login(self, username, password):
     response = self.sendCommandAndGetResponse('USER', username)
     if (response[0] == '3') : # 331 User name okay, need password.
@@ -31,7 +36,5 @@ class FTPController:
     return ftputils.formatResponse(response)
 
   def quit(self):
-    response = self.sendCommandAndGetResponse('QUIT')
     self.commandSocketFile.close()
     self.commandSocket.close()
-    return response
