@@ -11,12 +11,12 @@ def parseStatusCode(data) :
   pass
 
 def parseHostAddressAndPort(data) :
-  print('Parsing ... ', dec(data))
   decodedData = data.decode(encoding='utf8')
-  stringHostAddress = re.findall(r'\(([0-9^,]+)', decodedData)[0].split(',')
+  hostAddressGroups = re.findall(r'\(([0-9^,]+)\)', decodedData)
+  stringHostAddress = hostAddressGroups[0].split(',')
   hostAddress = list(map(int, stringHostAddress))
-  hostPort = (hostAddress[-2] * 256) + hostAddress[-1]
-  return ('.'.join(stringHostAddress[0:-2]), hostPort)
+  hostPort = (hostAddress[4] * 256) + hostAddress[5]
+  return ('.'.join(stringHostAddress[0:4]), hostPort)
 
 controlSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 controlSocket.connect((TEST_HOST, FTP_PORT))
