@@ -7,47 +7,31 @@ class FTPController:
     self.commandHost = host
     self.commandPort = port
     self.commandSocket = ftputils.getTCPSocket()
-    print(self.commandHost, self.commandPort, self.commandSocket)
+    self.commandSocketFile = None
 
-# def dec(data) :
-#   return data.decode(encoding='utf8')
+  def connect(self):
+    self.commandSocket.connect((self.commandHost, self.commandPort))
+    self.commandSocketFile = self.commandSocket.makefile('r')
+    print('Successfully connected to', self.commandHost + '.')
+    return self.getResponse()
 
-# def parseStatusCode(data) :
-#   pass
+  def login(self, username, password):
+    response = self.sendCommandAndGetResponse('USER', username)
+    if (response[0] == '3') : # 331 User name okay, need password.
+      response = self.sendCommandAndGetResponse('PASS', password)
+    return response
 
-# controlSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# controlSocket.connect((TEST_HOST, FTP_PORT))
+  def sendCommandAndGetResponse(self, command, argument=''):
+    formattedCommand = ftputils.formatCommand(command, argument)
+    self.commandSocket.sendall(formattedCommand)
+    return self.getResponse()
 
-# controlSocket.sendall(b'USER demo\r\n')
-# d = controlSocket.recv(4096)
-# print(dec(d))
+  def getResponse(self):
+    response = self.commandSocketFile.readline(ftputils.BYTES_PER_LINE)
+    return ftputils.formatResponse(response)
 
-# controlSocket.sendall(b'PASS demopass\r\n')
-# d = controlSocket.recv(4096)
-# print(dec(d))
-
-# controlSocket.sendall(b'PASV\r\n')
-# d = controlSocket.recv(4096)
-# print(dec(d))
-
-# dataHost, dataPort = ftputils.parseHostAddressAndPort(d)
-# dataSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# dataSocket.connect((dataHost, dataPort))
-
-# controlSocket.sendall(b'MKD testdir\r\n')
-# d = controlSocket.recv(4096)
-# print(dec(d))
-
-# controlSocket.sendall(b'LIST\r\n')
-# d = controlSocket.recv(4096)
-# print(dec(d))
-# d = dataSocket.recv(4096)
-# print(dec(d))
-# dataSocket.close()
-
-# controlSocket.sendall(b'RMD testdir\r\n')
-# d = controlSocket.recv(4096)
-# d = controlSocket.recv(4096)
-# print(dec(d))
-
-# controlSocket.close()
+  def quit(self):
+    response = self.sendCommandAndGetResponse('QUIT')
+    self.commandSocketFile.close()
+    self.commandSocket.close()
+    return response
