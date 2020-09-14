@@ -2,7 +2,7 @@ import sys
 import ftputils
 from ftpcontroller import FTPController
 
-def main():
+def initConnection():
   if (len(sys.argv) != 2) :
     print('Error, no specified name or IP address of server.')
     return
@@ -10,6 +10,25 @@ def main():
   if (hostName == 'test'):
     hostName = ftputils.TEST_HOST
   ftpController = FTPController(hostName)
-  print(hostName)
+  print(ftpController.connect())
+  return ftpController
+
+def promptLogin(ftpController):
+  username = input('Please enter your username: ')
+  password = input('Please enter your password: ')
+  print(ftpController.login(username, password))
+
+def readCommands(ftpController):
+  while(True) :
+    line = ftputils.getFTPLine()
+    command, argument = ftputils.parseLine(line)
+    response = ftpController.sendCommandAndGetResponse(command, argument)
+    print(response)
+
+def main():
+  ftpController = initConnection()
+  promptLogin(ftpController)
+  readCommands(ftpController)
+  print(ftpController.quit())
 
 main()
