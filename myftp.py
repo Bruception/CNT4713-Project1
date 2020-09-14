@@ -3,7 +3,7 @@ import ftputils
 from ftpcontroller import FTPController
 
 def initConnection():
-  if (len(sys.argv) != 2) :
+  if (len(sys.argv) != 2):
     print('Error, no specified name or IP address of server.')
     return
   hostName = sys.argv[1]
@@ -19,16 +19,19 @@ def promptLogin(ftpController):
   print(ftpController.login(username, password))
 
 def readCommands(ftpController):
-  while(True) :
+  readNext = True
+  while(readNext):
     line = ftputils.getFTPLine()
     command, argument = ftputils.parseLine(line)
     response = ftpController.sendCommandAndGetResponse(command, argument)
     print(response)
+    if (command == 'QUIT'):
+      readNext = False
 
 def main():
   ftpController = initConnection()
   promptLogin(ftpController)
   readCommands(ftpController)
-  print(ftpController.quit())
+  ftpController.quit()
 
 main()
