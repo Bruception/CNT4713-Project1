@@ -10,4 +10,4 @@
 - delete
 
 ## Quickstart
-- ./start.sh
+```./start.sh```
