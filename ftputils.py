@@ -81,4 +81,5 @@ def getFTPLine():
 
 #TODO: Implement parse with validation
 def parseResponseStatusCode(response):
-  return response.split(' ')[0] if response.split(' ')[0].isdigit() else '500'
+  splitLine = response.split(' ')[0]
+  return splitLine if splitLine.isdigit() else '500'
