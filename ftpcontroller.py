@@ -22,7 +22,7 @@ class FTPController:
 
   def login(self, username, password):
     response = self.sendCommandAndGetResponse('USER', username)
-    if (response[0] == '3') : # 331 User name okay, need password.
+    if (response[0] == '3'): # 331 User name okay, need password.
       response = self.sendCommandAndGetResponse('PASS', password)
     return response
 
