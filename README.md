@@ -8,3 +8,6 @@
 - quit
 - cd
 - delete
+
+## Quickstart
+- ./start.sh
