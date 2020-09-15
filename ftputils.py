@@ -81,4 +81,4 @@ def getFTPLine():
 
 #TODO: Implement parse with validation
 def parseResponseStatusCode(response):
-    return response.split(' ')[0]
+  return response.split(' ')[0]
