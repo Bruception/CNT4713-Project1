@@ -79,7 +79,6 @@ def getFTPLine():
   line = input('ftp> ')
   return line
 
-#TODO: Implement parse with validation
 def parseResponseStatusCode(response):
   splitLine = response.split(' ')[0]
   return splitLine if splitLine.isdigit() else '500'
