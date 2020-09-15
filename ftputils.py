@@ -43,7 +43,6 @@ COMMAND_MAP = {
   },
 }
 
-# TODO: Add response validation
 def parseHostAddressAndPort(response):
   if parseResponseStatusCode(response) != '227':
     return ('', 0)
