@@ -44,7 +44,7 @@ COMMAND_MAP = {
 }
 
 def parseHostAddressAndPort(response):
-  if parseResponseStatusCode(response) != '227':
+  if (parseResponseStatusCode(response) != '227'):
     return ('', 0)
   hostAddressGroups = re.findall(r'\(([0-9^,]+)\)', response)
   stringHostAddress = hostAddressGroups[0].split(',')
