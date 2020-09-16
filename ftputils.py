@@ -4,10 +4,10 @@ import socket
 
 FTP_PORT = 21
 TEST_HOST = 'inet.cs.fiu.edu'
-BYTES_PER_LINE = 4096
+BYTES_PER_LINE = 8192
 
 DATA_COMMANDS = ['LIST', 'RETR', 'STOR']
-FILTER_CODES = ['331']
+FILTER_CODES = ['331', '227']
 
 COMMAND_MAP = {
   'ls': {
@@ -51,10 +51,23 @@ def parseHostAddressAndPort(response):
   stringHostAddress = hostAddressGroups[0].split(',')
   hostAddress = list(map(int, stringHostAddress))
   hostPort = (hostAddress[4] * 256) + hostAddress[5]
-  return ('.'.join(stringHostAddress[0:4]), hostPort)
+  return ('.'.join(stringHostAddress[:4]), hostPort)
+
+def joinDataLines(dataBuffer):
+  buffer = []
+  for line in dataBuffer:
+    decodedLine = formatResponse(line.decode())
+    buffer.append(decodedLine)
+  return ''.join(buffer)
+
+def writeToFile(fileName, dataBuffer):
+  with open(fileName, 'wb') as file:
+    for line in dataBuffer:
+      file.write(line)
+    file.close()
 
 def formatResponse(response):
-  if (response[-1] == '\n'):
+  if (response and response[-1] == '\n'):
     response = response[0:-1]
   return response
 
@@ -82,5 +95,5 @@ def getFTPLine():
   return line
 
 def parseResponseStatusCode(response):
-  splitLine = response.split(' ')[0]
+  splitLine = response[:3]
   return splitLine if splitLine.isdigit() else '500'
