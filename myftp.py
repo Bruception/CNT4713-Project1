@@ -10,21 +10,23 @@ def initConnection():
   if (hostName == 'test'):
     hostName = ftputils.TEST_HOST
   ftpController = FTPController(hostName)
-  print(ftpController.connect())
+  ftpController.connect()
+  print(ftpController.dumpResponseBuffer())
   return ftpController
 
 def promptLogin(ftpController):
   username = input('Please enter your username: ')
   password = input('Please enter your password: ')
-  print(ftpController.login(username, password))
+  ftpController.login(username, password)
+  print(ftpController.dumpResponseBuffer())
 
 def readCommands(ftpController):
   readNext = True
   while(readNext):
     line = ftputils.getFTPLine()
     command, argument = ftputils.parseLine(line)
-    response = ftpController.sendCommandAndGetResponse(command, argument)
-    print(response)
+    ftpController.sendCommandAndGetResponse(command, argument)
+    print(ftpController.dumpResponseBuffer())
     if (command == 'QUIT'):
       readNext = False
 

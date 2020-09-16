@@ -7,6 +7,7 @@ TEST_HOST = 'inet.cs.fiu.edu'
 BYTES_PER_LINE = 4096
 
 DATA_COMMANDS = ['LIST', 'RETR', 'STOR']
+FILTER_CODES = ['331']
 
 COMMAND_MAP = {
   'ls': {
