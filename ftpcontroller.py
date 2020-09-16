@@ -1,6 +1,7 @@
 #FTP Client Controller
 import socket
 import ftputils
+import sys
 
 class FTPController:
   def __init__(self, host, port=ftputils.FTP_PORT):
@@ -24,6 +25,9 @@ class FTPController:
     response = self.sendCommandAndGetResponse('USER', username)
     if (response[0] == '3'): # 331 User name okay, need password.
       response = self.sendCommandAndGetResponse('PASS', password)
+    if (ftputils.parseResponseStatusCode(response) != '230'):
+      print('Invalid credentials.')
+      sys.exit()
     return response
 
   def sendCommandAndGetResponse(self, command, argument=''):
