@@ -13,7 +13,6 @@ def initConnection():
   print(ftpController.connect())
   return ftpController
 
-
 def promptLogin(ftpController):
   username = input('Please enter your username: ')
   password = input('Please enter your password: ')
