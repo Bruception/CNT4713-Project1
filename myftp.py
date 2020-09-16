@@ -9,14 +9,19 @@ def initConnection():
   hostName = sys.argv[1]
   if (hostName == 'test'):
     hostName = ftputils.TEST_HOST
-  ftpController = FTPController(hostName)
-  print(ftpController.connect())
-  return ftpController
+    ftpController = FTPController(hostName)
+    print(ftpController.connect())
+    return ftpController
+  else:
+    print('Invalid host name specified, exiting.')
+    return None
 
 def promptLogin(ftpController):
   username = input('Please enter your username: ')
   password = input('Please enter your password: ')
-  print(ftpController.login(username, password))
+  loginStatusCode = ftpController.login(username, password)
+  print(loginStatusCode)
+  return loginStatusCode
 
 def readCommands(ftpController):
   readNext = True
@@ -30,8 +35,11 @@ def readCommands(ftpController):
 
 def main():
   ftpController = initConnection()
-  promptLogin(ftpController)
-  readCommands(ftpController)
+  if (ftpController == None):
+    return
+  loginStatusCode = promptLogin(ftpController)
+  if (ftputils.parseResponseStatusCode(loginStatusCode) == '230'):
+    readCommands(ftpController)
   ftpController.quit()
 
 main()
