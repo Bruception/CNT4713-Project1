@@ -14,7 +14,7 @@ class FTPController:
   # TODO: Handle invalid host
   def connect(self):
     self.commandSocket = ftputils.getTCPSocket()
-    try :
+    try:
         self.commandSocket.connect((self.commandHost, self.commandPort))
         self.commandSocketFile = self.commandSocket.makefile('r')
         self.appendToBuffer(f'Successfully connected to {self.commandHost}.')
@@ -75,7 +75,7 @@ class FTPController:
 
   # TODO Handle missing file
   def sendData(self, argument, dataSocket):
-    try :
+    try:
       sourceFile = open(argument, 'rb')
     except FileNotFoundError:
       dataSocket.close()

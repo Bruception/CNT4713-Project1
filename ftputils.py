@@ -92,7 +92,7 @@ def getTCPSocket():
   return socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 def getFTPLine():
-  try :
+  try:
     line = input('ftp> ')
   except KeyboardInterrupt:
     sys.exit('\nProgram ended.')
