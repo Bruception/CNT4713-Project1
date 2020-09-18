@@ -14,9 +14,12 @@ class FTPController:
   # TODO: Handle invalid host
   def connect(self):
     self.commandSocket = ftputils.getTCPSocket()
-    self.commandSocket.connect((self.commandHost, self.commandPort))
-    self.commandSocketFile = self.commandSocket.makefile('r')
-    self.appendToBuffer(f'Successfully connected to {self.commandHost}.')
+    try :
+        self.commandSocket.connect((self.commandHost, self.commandPort))
+        self.commandSocketFile = self.commandSocket.makefile('r')
+        self.appendToBuffer(f'Successfully connected to {self.commandHost}.')
+    except Exception:
+        sys.exit("Something went wrong connecting to host '{}'.".format(self.commandHost))
     return self.getResponse()
 
   def login(self, username, password):
