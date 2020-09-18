@@ -75,7 +75,12 @@ class FTPController:
 
   # TODO Handle missing file
   def sendData(self, argument, dataSocket):
-    sourceFile = open(argument, 'rb')
+    try :
+      sourceFile = open(argument, 'rb')
+    except FileNotFoundError:
+      dataSocket.close()
+      self.dumpResponseBuffer()
+      return self.sendCommandAndGetResponse('ABOR')
     while True:
       line = sourceFile.read(ftputils.BYTES_PER_LINE)
       if (not line):
