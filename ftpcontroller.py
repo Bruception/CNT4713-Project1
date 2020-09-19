@@ -19,7 +19,7 @@ class FTPController:
         self.commandSocketFile = self.commandSocket.makefile('r')
         self.appendToBuffer(f'Successfully connected to {self.commandHost}.')
     except Exception:
-        sys.exit('Something went wrong connecting to host \'{}\'.'.format(self.commandHost))
+        sys.exit(f'Something went wrong connecting to host \'{commandHost}\'.')
     return self.getResponse()
 
   def login(self, username, password):
@@ -79,9 +79,11 @@ class FTPController:
       sourceFile = open(argument, 'rb')
     except FileNotFoundError:
       dataSocket.close()
+      self.sendCommandAndGetResponse('ABOR')
       self.dumpResponseBuffer()
-      self.appendToBuffer('File \'{}\' not found within current directory.'.format(argument))
-      return
+      errorString = f'File \'{argument}\' not found within current directory.'
+      self.appendToBuffer(errorString)
+      return errorString
     while True:
       line = sourceFile.read(ftputils.BYTES_PER_LINE)
       if (not line):
