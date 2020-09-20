@@ -11,7 +11,6 @@ class FTPController:
     self.commandSocket = None
     self.commandSocketFile = None
 
-  # TODO: Handle invalid host
   def connect(self):
     self.commandSocket = ftputils.getTCPSocket()
     try:
@@ -38,7 +37,6 @@ class FTPController:
   From (h1,h2,h3,h4,p1,p2) we can derive host address and port, so we parse it with parseHostAddressAndPort
   We create a socket to receive/send data from/to the FTP server
   """
-  # TODO: Handle failing socket
   def initDataCommand(self, command, argument):
     pasvResponse = self.sendCommandAndGetResponse('PASV')
     dataAddress = ftputils.parseHostAddressAndPort(pasvResponse)
@@ -73,7 +71,6 @@ class FTPController:
       ftputils.writeToFile(argument, dataBuffer)
     return self.getResponse()
 
-  # TODO Handle missing file
   def sendData(self, argument, dataSocket):
     try:
       sourceFile = open(argument, 'rb')
