@@ -2,6 +2,7 @@
 import re
 import socket
 import sys
+import os
 
 FTP_PORT = 21
 TEST_HOST = 'inet.cs.fiu.edu'
@@ -105,3 +106,12 @@ def getFTPLine():
 def parseResponseStatusCode(response):
   splitLine = response[:3]
   return splitLine if splitLine.isdigit() else '500'
+
+def getTransferResponse(argument, timeElapsed, responsePrefix):
+  if (timeElapsed > 1):
+    timeElapsed = f'{str(round(timeElapsed, 2))} seconds.'
+  else:
+    timeInMilis = round(timeElapsed * 1000)
+    milis = '<1' if timeInMilis == 0 else str(timeInMilis)
+    timeElapsed = f'{milis} milliseconds.'
+  return f'{responsePrefix} {str(os.stat(argument).st_size)} bytes in {timeElapsed}'
