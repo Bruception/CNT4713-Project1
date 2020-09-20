@@ -61,7 +61,8 @@ class FTPController:
     if (timeElapsed > 1):
       timeElapsed = f'{str(round(timeElapsed, 2))} seconds.'
     else:
-      milis = '<1' if round(timeElapsed * 1000) == 0 else str(round(timeElapsed * 1000))
+      timeInMilis = round(timeElapsed * 1000)
+      milis = '<1' if timeInMilis == 0 else str(timeInMilis)
       timeElapsed = f'{milis} milliseconds.'
     self.appendToBuffer(f'Transfered {str(os.stat(argument).st_size)} bytes in {timeElapsed}')
 
