@@ -58,12 +58,7 @@ class FTPController:
 
   def readData(self, command, argument, dataSocket):
     dataBuffer = []
-<<<<<<< HEAD
     while (True):
-=======
-    start = time.time()
-    while True:
->>>>>>> master
       line = dataSocket.recv(ftputils.BYTES_PER_LINE)
       if (not line):
         break
@@ -89,12 +84,7 @@ class FTPController:
       errorString = f'File \'{argument}\' not found within current directory.'
       self.appendToBuffer(errorString)
       return errorString
-<<<<<<< HEAD
     while (True):
-=======
-    start = time.time()
-    while True:
->>>>>>> master
       line = sourceFile.read(ftputils.BYTES_PER_LINE)
       if (not line):
         break
