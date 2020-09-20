@@ -74,6 +74,10 @@ def formatResponse(response):
 
 def parseLine(line):
   splitLine = line.split(' ')
+  if (len(splitLine) > 2):
+    command = splitLine[0]
+    joinedArgument = ' '.join(splitLine[1:])
+    splitLine = [command, joinedArgument]
   return getCommandAndArgument(splitLine)
 
 def getCommandAndArgument(line):
