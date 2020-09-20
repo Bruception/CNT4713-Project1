@@ -74,7 +74,7 @@ class FTPController:
   def sendData(self, argument, dataSocket):
     try:
       sourceFile = open(argument, 'rb')
-    except FileNotFoundError:
+    except (FileNotFoundError, IsADirectoryError):
       dataSocket.close()
       self.sendCommandAndGetResponse('ABOR')
       self.dumpResponseBuffer()
