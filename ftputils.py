@@ -110,5 +110,4 @@ def getTransferResponse(argument, timeElapsed, responsePrefix):
     timeInMilis = round(timeElapsed * 1000)
     milis = '<1' if timeInMilis == 0 else str(timeInMilis)
     timeElapsed = f'{milis} milliseconds.'
-
   return f'{responsePrefix} {str(os.stat(argument).st_size)} bytes in {timeElapsed}'
