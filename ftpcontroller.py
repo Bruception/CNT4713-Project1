@@ -73,7 +73,7 @@ class FTPController:
       self.appendToBuffer(data)
     else:
       ftputils.writeToFile(argument, dataBuffer)
-      self.appendToBuffer(ftputils.getTransferResponse(argument, end - start))
+      self.appendToBuffer(ftputils.getTransferResponse(argument, end - start, 'Received'))
     return self.getResponse()
 
   def sendData(self, argument, dataSocket):
@@ -93,7 +93,7 @@ class FTPController:
         break
       dataSocket.sendall(line)
     end = time.time()
-    self.appendToBuffer(ftputils.getTransferResponse(argument, end - start))
+    self.appendToBuffer(ftputils.getTransferResponse(argument, end - start, 'Sent'))
     dataSocket.close()
     sourceFile.close()
     return self.getResponse()
