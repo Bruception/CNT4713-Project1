@@ -2,6 +2,8 @@
 import socket
 import ftputils
 import sys
+import os
+import time
 
 class FTPController:
   def __init__(self, host, port=ftputils.FTP_PORT):
@@ -55,13 +57,23 @@ class FTPController:
       return self.readData(command, argument, dataSocket)
     return self.sendData(argument, dataSocket)
 
+  def addBytesToBuffer(self, argument, timeElapsed):
+    if (timeElapsed > 1):
+      timeElapsed = f'{str(round(timeElapsed, 2))} seconds.'
+    else:
+      milis = '<1' if round(timeElapsed * 1000) == 0 else str(round(timeElapsed * 1000))
+      timeElapsed = f'{milis} milliseconds.'
+    self.appendToBuffer(f'Transfered {str(os.stat(argument).st_size)} bytes in {timeElapsed}')
+
   def readData(self, command, argument, dataSocket):
     dataBuffer = []
+    start = time.time()
     while True:
       line = dataSocket.recv(ftputils.BYTES_PER_LINE)
       if (not line):
         break
       dataBuffer.append(line)
+    end = time.time()
     dataSocket.close()
     # We want to append the results of LIST to the response buffer
     if (command == 'LIST'):
@@ -69,6 +81,7 @@ class FTPController:
       self.appendToBuffer(data)
     else:
       ftputils.writeToFile(argument, dataBuffer)
+      self.addBytesToBuffer(argument, end - start)
     return self.getResponse()
 
   def sendData(self, argument, dataSocket):
@@ -81,11 +94,14 @@ class FTPController:
       errorString = f'File \'{argument}\' not found within current directory.'
       self.appendToBuffer(errorString)
       return errorString
+    start = time.time()
     while True:
       line = sourceFile.read(ftputils.BYTES_PER_LINE)
       if (not line):
         break
       dataSocket.sendall(line)
+    end = time.time()
+    self.addBytesToBuffer(argument, end - start)
     dataSocket.close()
     sourceFile.close()
     return self.getResponse()
