@@ -2,6 +2,7 @@
 import socket
 import ftputils
 import sys
+import time
 
 class FTPController:
   def __init__(self, host, port=ftputils.FTP_PORT):
@@ -57,11 +58,13 @@ class FTPController:
 
   def readData(self, command, argument, dataSocket):
     dataBuffer = []
+    start = time.time()
     while True:
       line = dataSocket.recv(ftputils.BYTES_PER_LINE)
       if (not line):
         break
       dataBuffer.append(line)
+    end = time.time()
     dataSocket.close()
     # We want to append the results of LIST to the response buffer
     if (command == 'LIST'):
@@ -69,6 +72,7 @@ class FTPController:
       self.appendToBuffer(data)
     else:
       ftputils.writeToFile(argument, dataBuffer)
+      self.appendToBuffer(ftputils.getTransferResponse(argument, end - start, 'Received'))
     return self.getResponse()
 
   def sendData(self, argument, dataSocket):
@@ -81,11 +85,14 @@ class FTPController:
       errorString = f'File \'{argument}\' not found within current directory.'
       self.appendToBuffer(errorString)
       return errorString
+    start = time.time()
     while True:
       line = sourceFile.read(ftputils.BYTES_PER_LINE)
       if (not line):
         break
       dataSocket.sendall(line)
+    end = time.time()
+    self.appendToBuffer(ftputils.getTransferResponse(argument, end - start, 'Sent'))
     dataSocket.close()
     sourceFile.close()
     return self.getResponse()
