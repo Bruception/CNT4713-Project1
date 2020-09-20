@@ -2,7 +2,6 @@
 import socket
 import ftputils
 import sys
-import os
 import time
 
 class FTPController:
@@ -57,14 +56,6 @@ class FTPController:
       return self.readData(command, argument, dataSocket)
     return self.sendData(argument, dataSocket)
 
-  def addBytesToBuffer(self, argument, timeElapsed):
-    if (timeElapsed > 1):
-      timeElapsed = f'{str(round(timeElapsed, 2))} seconds.'
-    else:
-      timeInMilis = round(timeElapsed * 1000)
-      milis = '<1' if timeInMilis == 0 else str(timeInMilis)
-      timeElapsed = f'{milis} milliseconds.'
-    self.appendToBuffer(f'Transfered {str(os.stat(argument).st_size)} bytes in {timeElapsed}')
 
   def readData(self, command, argument, dataSocket):
     dataBuffer = []
@@ -82,7 +73,7 @@ class FTPController:
       self.appendToBuffer(data)
     else:
       ftputils.writeToFile(argument, dataBuffer)
-      self.addBytesToBuffer(argument, end - start)
+      self.appendToBuffer(ftputils.getTransferResponse(argument, end - start))
     return self.getResponse()
 
   def sendData(self, argument, dataSocket):
@@ -102,7 +93,7 @@ class FTPController:
         break
       dataSocket.sendall(line)
     end = time.time()
-    self.addBytesToBuffer(argument, end - start)
+    self.appendToBuffer(ftputils.getTransferResponse(argument, end - start))
     dataSocket.close()
     sourceFile.close()
     return self.getResponse()
