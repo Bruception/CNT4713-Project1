@@ -1,6 +1,7 @@
 # FTP Utility functions
 import re
 import socket
+import sys
 
 FTP_PORT = 21
 TEST_HOST = 'inet.cs.fiu.edu'
@@ -91,7 +92,10 @@ def getTCPSocket():
   return socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 def getFTPLine():
-  line = input('ftp> ')
+  try:
+    line = input('ftp> ')
+  except KeyboardInterrupt:
+    sys.exit('\nProgram ended.')
   return line
 
 def parseResponseStatusCode(response):

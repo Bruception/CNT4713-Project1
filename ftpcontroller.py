@@ -11,12 +11,14 @@ class FTPController:
     self.commandSocket = None
     self.commandSocketFile = None
 
-  # TODO: Handle invalid host
   def connect(self):
     self.commandSocket = ftputils.getTCPSocket()
-    self.commandSocket.connect((self.commandHost, self.commandPort))
-    self.commandSocketFile = self.commandSocket.makefile('r')
-    self.appendToBuffer(f'Successfully connected to {self.commandHost}.')
+    try:
+        self.commandSocket.connect((self.commandHost, self.commandPort))
+        self.commandSocketFile = self.commandSocket.makefile('r')
+        self.appendToBuffer(f'Successfully connected to {self.commandHost}.')
+    except Exception:
+        sys.exit(f'Something went wrong connecting to host \'{self.commandHost}\'.')
     return self.getResponse()
 
   def login(self, username, password):
@@ -35,7 +37,6 @@ class FTPController:
   From (h1,h2,h3,h4,p1,p2) we can derive host address and port, so we parse it with parseHostAddressAndPort
   We create a socket to receive/send data from/to the FTP server
   """
-  # TODO: Handle failing socket
   def initDataCommand(self, command, argument):
     pasvResponse = self.sendCommandAndGetResponse('PASV')
     dataAddress = ftputils.parseHostAddressAndPort(pasvResponse)
@@ -70,9 +71,16 @@ class FTPController:
       ftputils.writeToFile(argument, dataBuffer)
     return self.getResponse()
 
-  # TODO Handle missing file
   def sendData(self, argument, dataSocket):
-    sourceFile = open(argument, 'rb')
+    try:
+      sourceFile = open(argument, 'rb')
+    except FileNotFoundError:
+      dataSocket.close()
+      self.sendCommandAndGetResponse('ABOR')
+      self.dumpResponseBuffer()
+      errorString = f'File \'{argument}\' not found within current directory.'
+      self.appendToBuffer(errorString)
+      return errorString
     while True:
       line = sourceFile.read(ftputils.BYTES_PER_LINE)
       if (not line):
