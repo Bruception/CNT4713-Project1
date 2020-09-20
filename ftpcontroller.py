@@ -56,7 +56,6 @@ class FTPController:
       return self.readData(command, argument, dataSocket)
     return self.sendData(argument, dataSocket)
 
-
   def readData(self, command, argument, dataSocket):
     dataBuffer = []
     start = time.time()
