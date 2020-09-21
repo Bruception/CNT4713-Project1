@@ -44,6 +44,10 @@ COMMAND_MAP = {
     'command': 'RMD',
     'argument': True,
   },
+  'pwd': {
+    'command': 'PWD',
+    'argument': False,
+  },
 }
 
 def parseHostAddressAndPort(response):
