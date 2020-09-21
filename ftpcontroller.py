@@ -15,11 +15,11 @@ class FTPController:
   def connect(self):
     self.commandSocket = ftputils.getTCPSocket()
     try:
-        self.commandSocket.connect((self.commandHost, self.commandPort))
-        self.commandSocketFile = self.commandSocket.makefile('r')
-        self.appendToBuffer(f'Successfully connected to {self.commandHost}.')
+      self.commandSocket.connect((self.commandHost, self.commandPort))
+      self.commandSocketFile = self.commandSocket.makefile('r')
+      self.appendToBuffer(f'Successfully connected to \'{self.commandHost}\'.')
     except Exception:
-        sys.exit(f'Something went wrong connecting to host \'{self.commandHost}\'.')
+      sys.exit(f'Something went wrong connecting to \'{self.commandHost}\'.')
     return self.getResponse()
 
   def login(self, username, password):
@@ -59,7 +59,7 @@ class FTPController:
   def readData(self, command, argument, dataSocket):
     dataBuffer = []
     start = time.time()
-    while True:
+    while (True):
       line = dataSocket.recv(ftputils.BYTES_PER_LINE)
       if (not line):
         break
@@ -78,15 +78,15 @@ class FTPController:
   def sendData(self, argument, dataSocket):
     try:
       sourceFile = open(argument, 'rb')
-    except FileNotFoundError:
+    except (FileNotFoundError, IsADirectoryError):
       dataSocket.close()
-      self.sendCommandAndGetResponse('ABOR')
+      self.getResponse() # We need to get the 226 response if opening the file fails
       self.dumpResponseBuffer()
       errorString = f'File \'{argument}\' not found within current directory.'
       self.appendToBuffer(errorString)
       return errorString
     start = time.time()
-    while True:
+    while (True):
       line = sourceFile.read(ftputils.BYTES_PER_LINE)
       if (not line):
         break
